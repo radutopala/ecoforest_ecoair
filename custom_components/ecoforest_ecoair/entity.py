@@ -14,7 +14,7 @@ from homeassistant.helpers.typing import StateType
 
 from .const import DOMAIN, MANUFACTURER
 from .coordinator import EcoforestCoordinator
-from .overrides.device import EcoGeoDevice
+from .overrides.device import EcoAirDevice
 
 
 SENSOR_TYPES = {
@@ -29,7 +29,7 @@ SENSOR_TYPES = {
 class EcoforestSensorEntityDescription(SensorEntityDescription):
     """Describes Ecoforest sensor entity."""
 
-    value_fn: Callable[[EcoGeoDevice], StateType] | None = None
+    value_fn: Callable[[EcoAirDevice], StateType] | None = None
 
 class EcoforestEntity(CoordinatorEntity[EcoforestCoordinator]):
     """Common Ecoforest entity using CoordinatorEntity."""
@@ -77,7 +77,7 @@ class EcoforestEntity(CoordinatorEntity[EcoforestCoordinator]):
         )
 
     @property
-    def data(self) -> EcoGeoDevice:
+    def data(self) -> EcoAirDevice:
         """Return ecoforest data."""
         assert self.coordinator.data
         return self.coordinator.data

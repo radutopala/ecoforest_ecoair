@@ -12,7 +12,7 @@ from homeassistant.config_entries import ConfigFlow, ConfigFlowResult
 from homeassistant.const import CONF_HOST, CONF_PASSWORD, CONF_USERNAME, CONF_ALIAS
 
 from .const import DOMAIN, MANUFACTURER
-from .overrides.api import EcoGeoApi
+from .overrides.api import EcoAirApi
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -26,7 +26,7 @@ STEP_USER_DATA_SCHEMA = vol.Schema(
 )
 
 
-class EcoForestEcoGeoConfigFlow(ConfigFlow, domain=DOMAIN):
+class EcoForestEcoAirConfigFlow(ConfigFlow, domain=DOMAIN):
     """Handle a config flow for Ecoforest."""
 
     VERSION = 1
@@ -39,7 +39,7 @@ class EcoForestEcoGeoConfigFlow(ConfigFlow, domain=DOMAIN):
 
         if user_input is not None:
             try:
-                api = EcoGeoApi(
+                api = EcoAirApi(
                     user_input[CONF_HOST],
                     user_input[CONF_USERNAME],
                     user_input[CONF_PASSWORD],
@@ -47,8 +47,8 @@ class EcoForestEcoGeoConfigFlow(ConfigFlow, domain=DOMAIN):
                 device = await api.get()
             except EcoforestAuthenticationRequired:
                 errors["base"] = "invalid_auth"
-            except Exception:
-                _LOGGER.exception("Unexpected exception")
+            except Exception as exc:
+                _LOGGER.exception("Unexpected exception: %s", str(exc))
                 errors["base"] = "cannot_connect"
             else:
                 device_id = device.model_name

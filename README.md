@@ -1,15 +1,34 @@
 [![SWUbanner](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/banner-direct-single.svg)](https://stand-with-ukraine.pp.ua/)
 
-Ecoforest EcoGeo heat pump integration PoC (proof of concept, thus may lack features or stability)
+# Ecoforest EcoAir heat pump integration PoC (proof of concept, thus may lack features or stability)
+
+[![hacs_badge](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://github.com/hacs/integration)
+
+Home Assistant integration for Ecoforest EcoAir heat pumps.
+
+## Installation
+
+1. Add this repository to HACS as a custom repository
+2. Install the integration through HACS
+3. Restart Home Assistant
+4. Add the integration through the Home Assistant UI
+
+## Support
+
+For issues and feature requests, please use the [GitHub issue tracker](https://github.com/radutopala/ecoforest_ecoair/issues).
+
+## Credits
+
+This codebase is forked from [Ecoforest EcoGeo](https://github.com/bytestorm/ecoforest_ecogeo), so that EcoAir HPs can be supported, thank you for the great original work Sasha @bytestorm!
 
 To install this integration, add this GitHub Repo to the HACS Custom Repositories or use the button below
 
-[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=bytestorm&repository=ecoforest_ecogeo&category=integration)
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=radutopala&repository=ecoforest_ecoair&category=integration)
 
 After installing the integration in HACS
 - Restart Home Assistant 
 - Go to "Settings" -> "Devices & Services" -> "Add integration"
-- Look for "Ecoforest Ecogeo" integration to start setting it up
+- Look for "Ecoforest EcoAir" integration to start setting it up
 - For "Ecoforest Easynet URL" use the web interface address of your heat pump (e.g. http://192.168.1.200/)
 - Username is your heat pump serial number (same as its web interface)
 - Password is the first 8 characters of the original wireless network password (same as its web interface)
@@ -20,7 +39,7 @@ After installing the integration in HACS
 
 Custom visualization:
 
-![flow](https://github.com/bytestorm/ecoforest_ecogeo/blob/master/flow.png?raw=true)
+![flow](https://github.com/radutopala/ecoforest_ecoair/blob/master/flow.png?raw=true)
 
 <details>
   <summary>Details...</summary>
