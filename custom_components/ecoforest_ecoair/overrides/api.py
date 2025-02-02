@@ -4,7 +4,7 @@ from dataclasses import dataclass
 import httpx
 from pyecoforest.api import EcoforestApi
 
-from custom_components.ecoforest_ecogeo.overrides.device import EcoGeoDevice
+from custom_components.ecoforest_ecoair.overrides.device import EcoAirDevice
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -235,7 +235,7 @@ MAPPING = {
 }
 
 
-class EcoGeoApi(EcoforestApi):
+class EcoAirApi(EcoforestApi):
     def __init__(
         self,
         host: str,
@@ -244,7 +244,7 @@ class EcoGeoApi(EcoforestApi):
     ) -> None:
         super().__init__(host, httpx.BasicAuth(user, password))
 
-    async def get(self) -> EcoGeoDevice:
+    async def get(self) -> EcoAirDevice:
         state = {DataTypes.Coil: {}, DataTypes.Register: {}}
 
         for dt in [DataTypes.Coil, DataTypes.Register]:
@@ -279,7 +279,7 @@ class EcoGeoApi(EcoforestApi):
 
         _LOGGER.debug(device_info)
         _LOGGER.debug(state)
-        return EcoGeoDevice.build(self.parse_model_name(state), device_info)
+        return EcoAirDevice.build(self.parse_model_name(state), device_info)
 
     async def _load_data(self, address, length, op_type) -> dict[int, str]:
         response = await self._request(
@@ -298,7 +298,7 @@ class EcoGeoApi(EcoforestApi):
 
         return result
 
-    async def turn_switch(self, name, on: bool | None = False) -> EcoGeoDevice:
+    async def turn_switch(self, name, on: bool | None = False) -> EcoAirDevice:
         if name not in MAPPING.keys():
             raise Exception("unknown switch")
 
@@ -307,7 +307,7 @@ class EcoGeoApi(EcoforestApi):
         )
         return await self.get()
 
-    async def set_numeric_value(self, name, value: float) -> EcoGeoDevice:
+    async def set_numeric_value(self, name, value: float) -> EcoAirDevice:
         if name not in MAPPING.keys():
             raise Exception("unknown register")
 

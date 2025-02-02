@@ -20,7 +20,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from .const import DOMAIN
 from .coordinator import EcoforestCoordinator
 from .entity import EcoforestEntity, EcoforestSensorEntityDescription
-from .overrides.device import EcoGeoDevice
+from .overrides.device import EcoAirDevice
 from .overrides.api import MAPPING
 from .entity import SENSOR_TYPES
 

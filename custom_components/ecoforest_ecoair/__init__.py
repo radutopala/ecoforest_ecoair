@@ -8,7 +8,7 @@ from pyecoforest.exceptions import EcoforestAuthenticationRequired, EcoforestCon
 
 from .const import DOMAIN
 from .coordinator import EcoforestCoordinator
-from .overrides.api import EcoGeoApi
+from .overrides.api import EcoAirApi
 
 PLATFORMS = [Platform.SENSOR, Platform.SWITCH, Platform.NUMBER, Platform.BUTTON]
 
@@ -19,7 +19,7 @@ _LOGGER = logging.getLogger(__name__)
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up Ecoforest from a config entry."""
 
-    api = EcoGeoApi(entry.data[CONF_HOST], entry.data[CONF_USERNAME], entry.data[CONF_PASSWORD])
+    api = EcoAirApi(entry.data[CONF_HOST], entry.data[CONF_USERNAME], entry.data[CONF_PASSWORD])
 
     try:
         device = await api.get()
