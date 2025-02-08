@@ -28,14 +28,20 @@ _LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup_entry(
-    hass: HomeAssistant, config_entry: ConfigEntry, async_add_entities: AddEntitiesCallback
+    hass: HomeAssistant,
+    config_entry: ConfigEntry,
+    async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up the Ecoforest sensor platform."""
     coordinator: EcoforestCoordinator = hass.data[DOMAIN][config_entry.entry_id]
 
-    device_alias = config_entry.data[CONF_ALIAS] if CONF_ALIAS in config_entry.data else None
+    device_alias = (
+        config_entry.data[CONF_ALIAS] if CONF_ALIAS in config_entry.data else None
+    )
     entities = [
-        EcoforestSensor(coordinator, key, definition, device_alias) for key, definition in MAPPING.items() if definition["entity_type"] in SENSOR_TYPES.keys()
+        EcoforestSensor(coordinator, key, definition, device_alias)
+        for key, definition in MAPPING.items()
+        if definition["entity_type"] in SENSOR_TYPES.keys()
     ]
 
     async_add_entities(entities)
@@ -43,6 +49,7 @@ async def async_setup_entry(
 
 class EcoforestSensor(SensorEntity, EcoforestEntity):
     """Representation of an Ecoforest sensor."""
+
     entity_description: EcoforestSensorEntityDescription
 
     @property

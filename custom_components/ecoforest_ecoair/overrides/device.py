@@ -11,8 +11,4 @@ class EcoAirDevice:
     @classmethod
     def build(cls, model_name: str, data: dict[str, any]):  # -> EcoAirDevice:
 
-        return EcoAirDevice(
-            is_supported=True,
-            model_name=model_name,
-            state=data
-        )
+        return EcoAirDevice(is_supported=True, model_name=model_name, state=data)

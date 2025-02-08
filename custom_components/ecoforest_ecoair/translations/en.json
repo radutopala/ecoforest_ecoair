@@ -122,6 +122,15 @@
       },
       "pf": {
         "name": "PF"
+      },
+      "ventilation_rate": {
+        "name": "Ventilation rate"
+      },
+      "state": {
+        "name": "State"
+      },
+      "boiler_state": {
+        "name": "Boiler state"
       }
     },
     "number": {
@@ -136,6 +145,9 @@
       },
       "number_room_terminal_dg1_set_temperature": {
         "name": "Room terminal DG1 set temperature"
+      },
+      "number_dhw_recirculation": {
+        "name": "DHW recirculation temperature"
       }
     },
     "switch": {
@@ -153,6 +165,9 @@
       },
       "switch_sg2_output": {
         "name": "SG2 Pump"
+      },
+      "switch_dhw_recirculation": {
+        "name": "DHW recirculation enabled"
       }
     },
     "button": {
