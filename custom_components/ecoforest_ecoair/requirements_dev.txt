@@ -1,3 +1,14 @@
-homeassistant
-httpx
-voluptuous
+homeassistant==2024.12.5
+httpx==0.27.2
+voluptuous==0.15.2
+pyecoforest==0.4.0
+aiodns==3.2.0
+aiohttp==3.11.11
+attrs==24.2.0
+jinja2==3.1.4
+psutil==6.1.1
+urllib3==1.26.20
+python-dateutil==2.9.0.post0
+requests==2.32.3
+six==1.17.0
+pyyaml==6.0.2

@@ -13,6 +13,52 @@ Home Assistant integration for Ecoforest EcoAir heat pumps.
 3. Restart Home Assistant
 4. Add the integration through the Home Assistant UI
 
+## Development Setup
+
+### Using uv (Fast Python Package Installer)
+
+For development, you can use `uv` to install dependencies faster:
+
+1. Install uv:
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+2. Create and activate a virtual environment:
+```bash
+uv venv
+source .venv/bin/activate  # On Unix/macOS
+# or
+.venv\Scripts\activate  # On Windows
+```
+
+3. Install development dependencies:
+```bash
+uv pip install -r custom_components/ecoforest_ecoair/requirements_dev.txt
+```
+
+4. Running tests:
+
+First, set up your environment variables:
+```bash
+# On Unix/macOS:
+export ECOFOREST_HOST="http://192.168.1.200"  # Your heat pump's web interface URL
+export ECOFOREST_USER="your_serial_number"     # Your heat pump's serial number
+export ECOFOREST_PASSWORD="password"           # First 8 chars of wireless network password
+
+# On Windows (PowerShell):
+$env:ECOFOREST_HOST="http://192.168.1.200"
+$env:ECOFOREST_USER="your_serial_number"
+$env:ECOFOREST_PASSWORD="password"
+```
+
+Then run the test:
+```bash
+uv run test.py
+```
+
+This will test the connection with your heat pump and display device information if successful.
+
 ## Support
 
 For issues and feature requests, please use the [GitHub issue tracker](https://github.com/radutopala/ecoforest_ecoair/issues).
