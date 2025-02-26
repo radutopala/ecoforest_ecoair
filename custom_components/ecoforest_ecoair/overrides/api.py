@@ -32,6 +32,11 @@ SET_MAPPING = {
         "operation": OP_TYPE_SET_REGISTER,
         "address": 6112,
     },
+    "button_reset_alarms": {
+        "operation": OP_TYPE_SET_REGISTER,
+        "entity_type": "button",
+        "address": 6755,
+    },
 }
 
 GET_MAPPING = {
@@ -171,98 +176,14 @@ GET_MAPPING = {
             "entity_type": "temperature",
             "address": 28,
         },
+        {
+            "name": "t_heating_setpoint",
+            "type": "float",
+            "entity_type": "temperature",
+            "address": 0,
+        },
     ],
 }
-
-""" MAPPING = {
-    "t_heating": {
-        "data_type": DataTypes.Register,
-        "type": "float",
-        "address": 200,
-        "entity_type": "temperature",
-    },
-    "t_dg1_h": {
-        "data_type": DataTypes.Register,
-        "type": "float",
-        "address": 3,
-        "entity_type": "temperature",
-    },
-    "t_dg1_c": {
-        "data_type": DataTypes.Register,
-        "type": "float",
-        "address": 197,
-        "entity_type": "temperature",
-    },
-    "t_sg2": {
-        "data_type": DataTypes.Register,
-        "type": "float",
-        "address": 194,
-        "entity_type": "temperature",
-    },
-    "t_sg3": {
-        "data_type": DataTypes.Register,
-        "type": "float",
-        "address": 195,
-        "entity_type": "temperature",
-    },
-    "t_sg4": {
-        "data_type": DataTypes.Register,
-        "type": "float",
-        "address": 196,
-        "entity_type": "temperature",
-    },
-    "p_output": {
-        "data_type": DataTypes.Register,
-        "type": "float",
-        "address": 14,
-        "entity_type": "pressure",
-    },
-    "switch_heating": {
-        "data_type": DataTypes.Coil,
-        "type": "boolean",
-        "address": 121,
-        "entity_type": "switch",
-    },
-    "switch_dg1_output": {
-        "data_type": DataTypes.Coil,
-        "type": "boolean",
-        "address": 60,
-        "entity_type": "switch",
-    },
-    "switch_sg2_output": {
-        "data_type": DataTypes.Coil,
-        "type": "boolean",
-        "address": 57,
-        "entity_type": "switch",
-    },
-    "button_reset_alarms": {
-        "data_type": DataTypes.Coil,
-        "type": "boolean",
-        "address": 130,
-        "entity_type": "button",
-    },
-    "number_dhw_dt_start": {
-        "data_type": DataTypes.Register,
-        "type": "float",
-        "address": 41,
-        "entity_type": "temperature",
-        "is_number": True,
-        "min": 2,
-        "max": 25,
-        "step": 0.1,
-    },
-    "number_dhw_htr_set": {
-        "data_type": DataTypes.Register,
-        "type": "float",
-        "address": 59,
-        "entity_type": "temperature",
-        "is_number": True,
-        "min": 0,
-        "max": 70,
-        "step": 0.1,
-    },
-}
-"""
 
 
 class EcoAirApi(EcoforestApi):
