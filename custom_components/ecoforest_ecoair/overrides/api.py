@@ -31,6 +31,33 @@ OPERATION_MAPPING = {
             "address": 21,
         },
     ],
+    2149: [
+        {
+            "name": "cop",
+            "entity_type": "measurement",
+            "value_fn": lambda self, response: (
+                0
+                if len(response) <= 3
+                else (
+                    val1 := self.parse_ecoforest_int(response[1]),
+                    val2 := self.parse_ecoforest_int(response[3]),
+                    (
+                        round(float(val1) / float(val2), 1)
+                        if val1 != 0 and val2 != 0
+                        else 0
+                    ),
+                )[-1]
+            ),
+        },
+    ],
+    2151: [
+        {
+            "name": "t_dhw",
+            "type": "float",
+            "entity_type": "temperature",
+            "address": 28,
+        },
+    ],
     2125: [
         {
             "name": "model_name",
@@ -292,9 +319,13 @@ class EcoAirApi(EcoforestApi):
                 if "value_fn" in definition:
                     # Apply the value function to get the result
                     value = definition["value_fn"](self, state[operation])
+                    _LOGGER.debug(
+                        "value_fn received value: %s (type: %s)", value, type(value)
+                    )
                 elif "address" in definition:
                     # Get the raw value
                     value = state[operation][definition["address"]]
+
                     match definition["type"]:
                         case "int":
                             value = self.parse_ecoforest_int(value)
@@ -302,13 +333,13 @@ class EcoAirApi(EcoforestApi):
                             value = self.parse_ecoforest_float(value)
                         case "boolean":
                             value = self.parse_ecoforest_bool(value)
-                        case "custom":
-                            continue
                         case _:
-                            _LOGGER.error("unknown entity type for %s", name)
+                            _LOGGER.warning(
+                                "unknown definition type for %s", definition["name"]
+                            )
                             continue
 
-                device_info[definition["name"]] = value
+            device_info[definition["name"]] = value
 
         for operation, definitions in OPERATION_MAPPING.items():
             # Process each definition in the operation
@@ -396,6 +427,9 @@ class EcoAirApi(EcoforestApi):
         return ("0000" + hex(value)[2:])[-4:]
 
     def parse_ecoforest_int(self, value):
+        _LOGGER.debug(
+            "parse_ecoforest_int received value: %s (type: %s)", value, type(value)
+        )
         result = int(value, 16)
         return result if result <= 32768 else result - 65536
 
@@ -407,6 +441,9 @@ class EcoAirApi(EcoforestApi):
 
     def _parse_model_hex_to_char(self, value: str) -> str:
         """Convert hex value to model name character using the same mapping as JavaScript."""
+        _LOGGER.debug(
+            "_parse_model_hex_to_char received value: %s (type: %s)", value, type(value)
+        )
         val = int(value, 16)
         if val > 32768:
             val = val - 65536
