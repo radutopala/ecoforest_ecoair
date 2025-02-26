@@ -10,6 +10,7 @@ from homeassistant.components.sensor import (
     SensorEntityDescription,
     SensorStateClass,
 )
+from homeassistant.components.number import NumberEntityDescription
 from homeassistant.const import (
     UnitOfTemperature,
     UnitOfPower,
@@ -23,8 +24,6 @@ from homeassistant.helpers.typing import StateType
 from .const import DOMAIN, MANUFACTURER
 from .coordinator import EcoforestCoordinator
 from .overrides.device import EcoAirDevice
-from .number import EcoforestNumberEntityDescription
-
 
 SENSOR_TYPES = {
     "temperature": {
@@ -46,6 +45,14 @@ class EcoforestSensorEntityDescription(SensorEntityDescription):
     """Describes Ecoforest sensor entity."""
 
     value_fn: Callable[[EcoAirDevice], StateType] | None = None
+
+
+@dataclass(frozen=True, kw_only=True)
+class EcoforestNumberEntityDescription(NumberEntityDescription):
+    """Describes an Ecoforest number entity."""
+
+    value_fn: Callable[[Device], bool]
+    switch_fn: Callable[[EcoforestApi, bool], Awaitable[Device]]
 
 
 class EcoforestEntity(CoordinatorEntity[EcoforestCoordinator]):

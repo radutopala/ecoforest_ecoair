@@ -10,23 +10,15 @@ from pyecoforest.api import EcoforestApi
 from pyecoforest.models.device import Device
 
 from homeassistant.components.number.const import NumberMode
-from homeassistant.components.number import NumberEntity, NumberEntityDescription
+from homeassistant.components.number import NumberEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import DOMAIN
 from .coordinator import EcoforestCoordinator
-from .entity import EcoforestEntity
+from .entity import EcoforestEntity, EcoforestNumberEntityDescription
 from .overrides.api import GET_MAPPING
-
-
-@dataclass(frozen=True, kw_only=True)
-class EcoforestNumberEntityDescription(NumberEntityDescription):
-    """Describes an Ecoforest number entity."""
-
-    value_fn: Callable[[Device], bool]
-    switch_fn: Callable[[EcoforestApi, bool], Awaitable[Device]]
 
 
 async def async_setup_entry(
