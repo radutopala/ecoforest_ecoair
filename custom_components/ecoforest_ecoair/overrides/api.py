@@ -38,6 +38,30 @@ OPERATION_MAPPING = {
             "entity_type": "temperature",
             "address": 21,
         },
+        {
+            "name": "t_brine_in",
+            "type": "float",
+            "address": 19,
+            "entity_type": "temperature",
+        },
+        {
+            "name": "t_brine_out",
+            "type": "float",
+            "address": 22,
+            "entity_type": "temperature",
+        },
+        {
+            "name": "p_brine",
+            "type": "float",
+            "address": 18,
+            "entity_type": "pressure",
+        },
+        {
+            "name": "ventilation_rate",
+            "type": "float",
+            "address": 30,
+            "entity_type": "measurement",
+        },
     ],
     2149: [
         {
@@ -116,42 +140,6 @@ OPERATION_MAPPING = {
         "type": "float",
         "address": 196,
         "entity_type": "temperature",
-    },
-    "power_heating": {
-        "data_type": DataTypes.Register,
-        "type": "float",
-        "address": 133,
-        "entity_type": "power",
-    },
-    "power_electric": {
-        "data_type": DataTypes.Register,
-        "type": "float",
-        "address": 135,
-        "entity_type": "power",
-    },
-    "power_output": {
-        "data_type": DataTypes.Register,
-        "type": "custom",
-        "entity_type": "power",
-        "value_fn": lambda data: data["power_cooling"] + data["power_heating"],
-    },
-    "t_brine_in": {
-        "data_type": DataTypes.Register,
-        "type": "float",
-        "address": 2,
-        "entity_type": "temperature",
-    },
-    "t_brine_out": {
-        "data_type": DataTypes.Register,
-        "type": "float",
-        "address": 1,
-        "entity_type": "temperature",
-    },
-    "p_brine": {
-        "data_type": DataTypes.Register,
-        "type": "float",
-        "address": 13,
-        "entity_type": "pressure",
     },
     "p_output": {
         "data_type": DataTypes.Register,
@@ -244,12 +232,6 @@ OPERATION_MAPPING = {
         "min": 15,
         "max": 30,
         "step": 0.1,
-    },
-    "ventilation_rate": {
-        "data_type": DataTypes.Register,
-        "type": "float",
-        "address": 30,
-        "entity_type": "measurement",
     },
     "state": {
         "data_type": DataTypes.Register,
