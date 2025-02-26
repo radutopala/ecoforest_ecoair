@@ -18,7 +18,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from .const import DOMAIN
 from .coordinator import EcoforestCoordinator
 from .entity import EcoforestEntity
-from .overrides.api import MAPPING
+from .overrides.api import OPERATION_MAPPING
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -41,9 +41,14 @@ async def async_setup_entry(
     """Set up Ecoforest number platform."""
     coordinator: EcoforestCoordinator = hass.data[DOMAIN][config_entry.entry_id]
 
-    device_alias = config_entry.data[CONF_ALIAS] if CONF_ALIAS in config_entry.data else None
+    device_alias = (
+        config_entry.data[CONF_ALIAS] if CONF_ALIAS in config_entry.data else None
+    )
     entities = [
-        EcoforestNumberEntity(coordinator, key, definition, device_alias) for key, definition in MAPPING.items() if "is_number" in definition.keys() and definition["is_number"] == True
+        EcoforestNumberEntity(coordinator, definition["name"], definition, device_alias)
+        for _, definitions in OPERATION_MAPPING.items()
+        for definition in definitions
+        if "entity_type" in definition and definition["entity_type"] == "number"
     ]
 
     async_add_entities(entities)
@@ -75,10 +80,10 @@ class EcoforestNumberEntity(EcoforestEntity, NumberEntity):
 
     @property
     def native_value(self) -> float:
-         """Return the state of the ecoforest device."""
-         return self.data.state[self.entity_description.key]
+        """Return the state of the ecoforest device."""
+        return self.data.state[self.entity_description.key]
 
     async def async_set_native_value(self, value: float):
-         """Set the value."""
-         await self.coordinator.api.set_numeric_value(self.entity_description.key, value)
-         await self.coordinator.async_request_refresh()
+        """Set the value."""
+        await self.coordinator.api.set_numeric_value(self.entity_description.key, value)
+        await self.coordinator.async_request_refresh()

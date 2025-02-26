@@ -23,6 +23,14 @@ class Operations:
 
 
 OPERATION_MAPPING = {
+    2125: [
+        {
+            "name": "model_name",
+            "value_fn": lambda self, response: self.concatenate_model_name(
+                response[:5]
+            ),
+        },
+    ],
     2148: [
         {
             "name": "t_outdoor",
@@ -56,16 +64,6 @@ OPERATION_MAPPING = {
             "type": "float",
             "entity_type": "temperature",
             "address": 28,
-        },
-    ],
-    2125: [
-        {
-            "name": "model_name",
-            "type": "string",
-            "entity_type": "sensor",
-            "value_fn": lambda self, response: self.concatenate_model_name(
-                response[:5]
-            ),
         },
     ],
 }
@@ -344,6 +342,9 @@ class EcoAirApi(EcoforestApi):
         for operation, definitions in OPERATION_MAPPING.items():
             # Process each definition in the operation
             for definition in definitions:
+                if "entity_type" not in definition:
+                    continue
+
                 if definition["entity_type"] == "temperature":
                     if device_info[definition["name"]] == -999.9:
                         device_info[definition["name"]] = None

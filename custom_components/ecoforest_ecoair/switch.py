@@ -17,7 +17,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from .const import DOMAIN
 from .coordinator import EcoforestCoordinator
 from .entity import EcoforestEntity
-from .overrides.api import MAPPING
+from .overrides.api import OPERATION_MAPPING
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -36,9 +36,14 @@ async def async_setup_entry(
     """Set up Ecoforest switch platform."""
     coordinator: EcoforestCoordinator = hass.data[DOMAIN][config_entry.entry_id]
 
-    device_alias = config_entry.data[CONF_ALIAS] if CONF_ALIAS in config_entry.data else None
+    device_alias = (
+        config_entry.data[CONF_ALIAS] if CONF_ALIAS in config_entry.data else None
+    )
     entities = [
-        EcoforestSwitchEntity(coordinator, key, definition, device_alias) for key, definition in MAPPING.items() if definition["entity_type"] == "switch"
+        EcoforestSwitchEntity(coordinator, definition["name"], definition, device_alias)
+        for _, definitions in OPERATION_MAPPING.items()
+        for definition in definitions
+        if "entity_type" in definition and definition["entity_type"] == "switch"
     ]
 
     async_add_entities(entities)
