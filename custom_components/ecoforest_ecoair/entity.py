@@ -23,6 +23,7 @@ from homeassistant.helpers.typing import StateType
 from .const import DOMAIN, MANUFACTURER
 from .coordinator import EcoforestCoordinator
 from .overrides.device import EcoAirDevice
+from .number import EcoforestNumberEntityDescription
 
 
 SENSOR_TYPES = {
@@ -85,6 +86,15 @@ class EcoforestEntity(CoordinatorEntity[EcoforestCoordinator]):
                     if "options" in SENSOR_TYPES[definition["entity_type"]].keys()
                     else None
                 ),
+            )
+        elif definition["entity_type"] == "number":
+            self.entity_description = EcoforestNumberEntityDescription(
+                key=key,
+                translation_key=key,
+                device_class=definition["device_class"],
+                min_value=definition["min_value"],
+                max_value=definition["max_value"],
+                step=definition["step"],
             )
         else:
             self.entity_description = EcoforestSensorEntityDescription(
