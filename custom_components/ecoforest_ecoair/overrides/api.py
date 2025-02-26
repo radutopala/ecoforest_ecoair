@@ -20,9 +20,39 @@ SET_MAPPING = {
         "operation": OP_TYPE_SET_SWITCH,
         "address": 1524,
     },
+    "number_dhw_setpoint": {
+        "operation": OP_TYPE_SET_REGISTER,
+        "address": 6106,
+    },
+    "number_dhw_recirculation": {
+        "operation": OP_TYPE_SET_REGISTER,
+        "address": 6112,
+    },
 }
 
 GET_MAPPING = {
+    2103: [
+        {
+            "name": "number_dhw_setpoint",
+            "address": 4,
+            "type": "float",
+            "entity_type": "temperature",
+            "is_number": True,
+            "min": 0,
+            "max": 65,
+            "step": 0.1,
+        },
+        {
+            "name": "number_dhw_recirculation",
+            "address": 10,
+            "type": "float",
+            "entity_type": "temperature",
+            "is_number": True,
+            "min": 0,
+            "max": 40,
+            "step": 0.1,
+        },
+    ],
     2104: [
         {
             "name": "switch_dhw_recirculation",
@@ -181,18 +211,6 @@ GET_MAPPING = {
         "address": 121,
         "entity_type": "switch",
     },
-    "switch_dhw": {
-        "data_type": DataTypes.Coil,
-        "type": "boolean",
-        "address": 213,
-        "entity_type": "switch",
-    },
-    "switch_dhw_recirculation": {
-        "data_type": DataTypes.Coil,
-        "type": "boolean",
-        "address": 123,
-        "entity_type": "switch",
-    },
     "switch_dg1_output": {
         "data_type": DataTypes.Coil,
         "type": "boolean",
@@ -249,16 +267,6 @@ GET_MAPPING = {
         "is_number": True,
         "min": 0,
         "max": 70,
-        "step": 0.1,
-    },
-    "number_room_terminal_dg1_set_temperature": {
-        "data_type": DataTypes.Register,
-        "type": "float",
-        "address": 176,
-        "entity_type": "temperature",
-        "is_number": True,
-        "min": 15,
-        "max": 30,
         "step": 0.1,
     },
 }
