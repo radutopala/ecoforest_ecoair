@@ -3,6 +3,7 @@ from dataclasses import dataclass
 
 import httpx
 from pyecoforest.api import EcoforestApi
+from homeassistant.components.number import NumberDeviceClass
 
 from custom_components.ecoforest_ecoair.overrides.device import EcoAirDevice
 
@@ -50,6 +51,8 @@ GET_MAPPING = {
             "min": 0,
             "max": 65,
             "step": 0.1,
+            "unit_of_measurement": "°C",
+            "device_class": NumberDeviceClass.TEMPERATURE,
         },
         {
             "name": "number_dhw_recirculation",
@@ -60,6 +63,8 @@ GET_MAPPING = {
             "min": 0,
             "max": 40,
             "step": 0.1,
+            "unit_of_measurement": "°C",
+            "device_class": NumberDeviceClass.TEMPERATURE,
         },
     ],
     2104: [

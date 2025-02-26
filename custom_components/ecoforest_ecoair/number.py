@@ -25,9 +25,11 @@ from .overrides.api import GET_MAPPING
 class EcoforestNumberEntityDescription(NumberEntityDescription):
     """Describes an Ecoforest number entity."""
 
-    min: None
-    max: None
-    step: None
+    device_class: str
+    min: float
+    max: float
+    step: float
+    unit_of_measurement: str
 
     value_fn: Callable[[Device], bool]
     switch_fn: Callable[[EcoforestApi, bool], Awaitable[Device]]
@@ -55,24 +57,32 @@ async def async_setup_entry(
 
 
 class EcoforestNumberEntity(EcoforestEntity, NumberEntity):
-    """Representation of an Ecoforest switch entity."""
+    """Representation of an Ecoforest number entity."""
 
     entity_description: EcoforestNumberEntityDescription
 
     # todo: use specs
     @property
     def native_min_value(self) -> float:
-        return 0
+        return self.entity_description.min
 
     # todo: use specs
     @property
     def native_max_value(self) -> float:
-        return 1000
+        return self.entity_description.max
 
     # todo: use specs
     @property
     def native_step(self) -> float:
-        return 0.1
+        return self.entity_description.step
+
+    @property
+    def native_unit_of_measurement(self) -> str:
+        return self.entity_description.unit_of_measurement
+
+    @property
+    def device_class(self) -> str:
+        return self.entity_description.device_class
 
     @property
     def mode(self):
