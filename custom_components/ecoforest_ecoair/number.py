@@ -25,11 +25,6 @@ from .overrides.api import GET_MAPPING
 class EcoforestNumberEntityDescription(NumberEntityDescription):
     """Describes an Ecoforest number entity."""
 
-    device_class: str
-    min: float
-    max: float
-    step: float
-
     value_fn: Callable[[Device], bool]
     switch_fn: Callable[[EcoforestApi, bool], Awaitable[Device]]
 
@@ -63,12 +58,12 @@ class EcoforestNumberEntity(EcoforestEntity, NumberEntity):
     # todo: use specs
     @property
     def native_min_value(self) -> float:
-        return self.entity_description.min
+        return self.entity_description.min_value
 
     # todo: use specs
     @property
     def native_max_value(self) -> float:
-        return self.entity_description.max
+        return self.entity_description.max_value
 
     # todo: use specs
     @property
