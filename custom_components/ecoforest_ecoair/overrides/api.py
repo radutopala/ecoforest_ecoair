@@ -160,6 +160,18 @@ GET_MAPPING = {
             "entity_type": "power",
             "address": 1,
         },
+        {
+            "name": "p_compressor_in",
+            "type": "float",
+            "entity_type": "pressure",
+            "address": 19,
+        },
+        {
+            "name": "p_compressor_out",
+            "type": "float",
+            "entity_type": "pressure",
+            "address": 20,
+        },
     ],
     2150: [
         {

@@ -120,6 +120,12 @@
       "p_output": {
         "name": "Output pressure"
       },
+      "p_compressor_in": {
+        "name": "Compressor inlet pressure"
+      },
+      "p_compressor_out": {
+        "name": "Compressor outlet pressure"
+      },
       "cop": {
         "name": "COP"
       },
