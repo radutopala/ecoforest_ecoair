@@ -16,13 +16,23 @@ SET_MAPPING = {
         "operation": OP_TYPE_SET_SWITCH,
         "address": 1535,
     },
+    "switch_dhw": {
+        "operation": OP_TYPE_SET_SWITCH,
+        "address": 1524,
+    },
 }
 
 GET_MAPPING = {
-    2123: [
+    2104: [
         {
             "name": "switch_dhw_recirculation",
-            "address": 7,
+            "address": 14,
+            "type": "boolean",
+            "entity_type": "switch",
+        },
+        {
+            "name": "switch_dhw",
+            "address": 3,
             "type": "boolean",
             "entity_type": "switch",
         },
