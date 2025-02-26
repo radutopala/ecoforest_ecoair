@@ -29,7 +29,6 @@ class EcoforestNumberEntityDescription(NumberEntityDescription):
     min: float
     max: float
     step: float
-    unit_of_measurement: str
 
     value_fn: Callable[[Device], bool]
     switch_fn: Callable[[EcoforestApi, bool], Awaitable[Device]]
@@ -75,10 +74,6 @@ class EcoforestNumberEntity(EcoforestEntity, NumberEntity):
     @property
     def native_step(self) -> float:
         return self.entity_description.step
-
-    @property
-    def native_unit_of_measurement(self) -> str:
-        return self.entity_description.unit_of_measurement
 
     @property
     def device_class(self) -> str:

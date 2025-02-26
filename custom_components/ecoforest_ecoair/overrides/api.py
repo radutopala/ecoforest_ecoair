@@ -51,7 +51,6 @@ GET_MAPPING = {
             "min": 0,
             "max": 65,
             "step": 0.1,
-            "unit_of_measurement": "°C",
             "device_class": NumberDeviceClass.TEMPERATURE,
         },
         {
@@ -63,7 +62,6 @@ GET_MAPPING = {
             "min": 0,
             "max": 40,
             "step": 0.1,
-            "unit_of_measurement": "°C",
             "device_class": NumberDeviceClass.TEMPERATURE,
         },
     ],
