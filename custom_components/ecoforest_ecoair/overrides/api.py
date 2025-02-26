@@ -57,6 +57,18 @@ OPERATION_MAPPING = {
                 )[-1]
             ),
         },
+        {
+            "name": "power_electric",
+            "type": "float",
+            "entity_type": "power",
+            "address": 3,
+        },
+        {
+            "name": "power_heating",
+            "type": "float",
+            "entity_type": "power",
+            "address": 1,
+        },
     ],
     2151: [
         {
@@ -73,18 +85,6 @@ OPERATION_MAPPING = {
         "data_type": DataTypes.Register,
         "type": "float",
         "address": 200,
-        "entity_type": "temperature",
-    },
-    "t_cooling": {
-        "data_type": DataTypes.Register,
-        "type": "float",
-        "address": 201,
-        "entity_type": "temperature",
-    },
-    "t_dhw": {
-        "data_type": DataTypes.Register,
-        "type": "float",
-        "address": 11,
         "entity_type": "temperature",
     },
     "t_dg1_h": {
@@ -117,22 +117,10 @@ OPERATION_MAPPING = {
         "address": 196,
         "entity_type": "temperature",
     },
-    "t_outdoor": {
-        "data_type": DataTypes.Register,
-        "type": "float",
-        "address": 20,
-        "entity_type": "temperature",
-    },
     "power_heating": {
         "data_type": DataTypes.Register,
         "type": "float",
         "address": 133,
-        "entity_type": "power",
-    },
-    "power_cooling": {
-        "data_type": DataTypes.Register,
-        "type": "float",
-        "address": 134,
         "entity_type": "power",
     },
     "power_electric": {
@@ -171,28 +159,10 @@ OPERATION_MAPPING = {
         "address": 14,
         "entity_type": "pressure",
     },
-    "cop": {
-        "data_type": DataTypes.Register,
-        "type": "float",
-        "address": 136,
-        "entity_type": "measurement",
-    },
-    "pf": {
-        "data_type": DataTypes.Register,
-        "type": "float",
-        "address": 138,
-        "entity_type": "measurement",
-    },
     "switch_heating": {
         "data_type": DataTypes.Coil,
         "type": "boolean",
         "address": 121,
-        "entity_type": "switch",
-    },
-    "switch_cooling": {
-        "data_type": DataTypes.Coil,
-        "type": "boolean",
-        "address": 107,
         "entity_type": "switch",
     },
     "switch_dhw": {
@@ -337,7 +307,7 @@ class EcoAirApi(EcoforestApi):
                             )
                             continue
 
-            device_info[definition["name"]] = value
+                device_info[definition["name"]] = value
 
         for operation, definitions in OPERATION_MAPPING.items():
             # Process each definition in the operation
@@ -355,7 +325,7 @@ class EcoAirApi(EcoforestApi):
                     and definition["name"] in device_info
                 ):
                     device_info[definition["name"]] = (
-                        device_info[definition["name"]] * 1000
+                        device_info[definition["name"]] * 10
                     )
 
                 if definition["entity_type"] == "state":
