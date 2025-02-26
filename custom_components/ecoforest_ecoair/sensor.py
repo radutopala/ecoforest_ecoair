@@ -21,7 +21,7 @@ from .const import DOMAIN
 from .coordinator import EcoforestCoordinator
 from .entity import EcoforestEntity, EcoforestSensorEntityDescription
 from .overrides.device import EcoAirDevice
-from .overrides.api import OPERATION_MAPPING
+from .overrides.api import GET_MAPPING
 from .entity import SENSOR_TYPES
 
 _LOGGER = logging.getLogger(__name__)
@@ -40,7 +40,7 @@ async def async_setup_entry(
     )
     entities = [
         EcoforestSensor(coordinator, definition["name"], definition, device_alias)
-        for _, definitions in OPERATION_MAPPING.items()
+        for _, definitions in GET_MAPPING.items()
         for definition in definitions
         if "entity_type" in definition
         and definition["entity_type"] in SENSOR_TYPES.keys()

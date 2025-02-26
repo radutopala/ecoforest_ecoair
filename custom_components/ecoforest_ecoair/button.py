@@ -17,7 +17,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from .const import DOMAIN
 from .coordinator import EcoforestCoordinator
 from .entity import EcoforestEntity
-from .overrides.api import OPERATION_MAPPING
+from .overrides.api import GET_MAPPING
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -41,7 +41,7 @@ async def async_setup_entry(
     )
     entities = [
         EcoforestButtonEntity(coordinator, definition["name"], definition, device_alias)
-        for _, definitions in OPERATION_MAPPING.items()
+        for _, definitions in GET_MAPPING.items()
         for definition in definitions
         if "entity_type" in definition and definition["entity_type"] == "button"
     ]

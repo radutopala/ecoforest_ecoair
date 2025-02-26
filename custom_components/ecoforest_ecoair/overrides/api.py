@@ -11,18 +11,22 @@ _LOGGER = logging.getLogger(__name__)
 OP_TYPE_SET_SWITCH = 2011
 OP_TYPE_SET_REGISTER = 2012
 
+SET_MAPPING = {
+    "switch_dhw_recirculation": {
+        "operation": OP_TYPE_SET_SWITCH,
+        "address": 1535,
+    },
+}
 
-class DataTypes:
-    Register = 1
-    Coil = 2
-
-
-class Operations:
-    Get = {DataTypes.Coil: 2001, DataTypes.Register: 2002}
-    Set = {DataTypes.Coil: 2011, DataTypes.Register: 2012}
-
-
-OPERATION_MAPPING = {
+GET_MAPPING = {
+    2123: [
+        {
+            "name": "switch_dhw_recirculation",
+            "address": 7,
+            "type": "boolean",
+            "entity_type": "switch",
+        },
+    ],
     2125: [
         {
             "name": "model_name",
@@ -247,18 +251,6 @@ OPERATION_MAPPING = {
         "max": 30,
         "step": 0.1,
     },
-    "state": {
-        "data_type": DataTypes.Register,
-        "type": "int",
-        "address": 5080,
-        "entity_type": "state",
-    },
-    "boiler_state": {
-        "data_type": DataTypes.Coil,
-        "type": "int",
-        "address": 29,
-        "entity_type": "state",
-    },
 }
 """
 
@@ -270,13 +262,13 @@ class EcoAirApi(EcoforestApi):
     async def get(self) -> EcoAirDevice:
         state = {}
 
-        for operation, definitions in OPERATION_MAPPING.items():
+        for operation, definitions in GET_MAPPING.items():
             state[operation] = await self._load_data(operation)
 
         device_info = {}
 
         # Process each operation mapping
-        for operation, definitions in OPERATION_MAPPING.items():
+        for operation, definitions in GET_MAPPING.items():
             # Process each definition in the operation
             for definition in definitions:
                 value = None
@@ -305,7 +297,7 @@ class EcoAirApi(EcoforestApi):
 
                 device_info[definition["name"]] = value
 
-        for operation, definitions in OPERATION_MAPPING.items():
+        for operation, definitions in GET_MAPPING.items():
             # Process each definition in the operation
             for definition in definitions:
                 if "entity_type" not in definition:
@@ -342,13 +334,13 @@ class EcoAirApi(EcoforestApi):
         return response
 
     async def turn_switch(self, name, on: bool | None = False) -> EcoAirDevice:
-        if name not in MAPPING.keys():
+        if name not in SET_MAPPING.keys():
             raise Exception("unknown switch")
 
         await self._request(
             data={
-                "idOperacion": OP_TYPE_SET_SWITCH,
-                "dir": MAPPING[name]["address"],
+                "idOperacion": SET_MAPPING[name]["operation"],
+                "dir": SET_MAPPING[name]["address"],
                 "num": 1,
                 int(on): int(on),
             }
@@ -356,15 +348,15 @@ class EcoAirApi(EcoforestApi):
         return await self.get()
 
     async def set_numeric_value(self, name, value: float) -> EcoAirDevice:
-        if name not in MAPPING.keys():
+        if name not in SET_MAPPING.keys():
             raise Exception("unknown register")
 
         converted_value = self.convert_to_ecoforest_int(value)
 
         await self._request(
             data={
-                "idOperacion": OP_TYPE_SET_REGISTER,
-                "dir": MAPPING[name]["address"],
+                "idOperacion": SET_MAPPING[name]["operation"],
+                "dir": SET_MAPPING[name]["address"],
                 "num": 1,
                 converted_value: converted_value,
             }
@@ -402,6 +394,9 @@ class EcoAirApi(EcoforestApi):
         return result if result <= 32768 else result - 65536
 
     def parse_ecoforest_bool(self, value):
+        _LOGGER.debug(
+            "parse_ecoforest_boolean received value: %s (type: %s)", value, type(value)
+        )
         return bool(int(value))
 
     def parse_ecoforest_float(self, value):
