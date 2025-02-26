@@ -51,9 +51,6 @@ class EcoforestSensorEntityDescription(SensorEntityDescription):
 class EcoforestNumberEntityDescription(NumberEntityDescription):
     """Describes an Ecoforest number entity."""
 
-    value_fn: Callable[[Device], bool]
-    switch_fn: Callable[[EcoforestApi, bool], Awaitable[Device]]
-
 
 class EcoforestEntity(CoordinatorEntity[EcoforestCoordinator]):
     """Common Ecoforest entity using CoordinatorEntity."""
