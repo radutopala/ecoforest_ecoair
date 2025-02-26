@@ -8,18 +8,7 @@ from custom_components.ecoforest_ecoair.overrides.device import EcoAirDevice
 
 _LOGGER = logging.getLogger(__name__)
 
-
-def parse_ecoforest_int(value):
-    result = int(value, 16)
-    return result if result <= 32768 else result - 65536
-
-
-MODEL_ADDRESS = 5323
-MODEL_LENGTH = 6
-
-OP_TYPE_GET_SWITCH = 2001
 OP_TYPE_SET_SWITCH = 2011
-OP_TYPE_GET_REGISTER = 2002
 OP_TYPE_SET_REGISTER = 2012
 
 
@@ -33,31 +22,28 @@ class Operations:
     Set = {DataTypes.Coil: 2011, DataTypes.Register: 2012}
 
 
-REQUESTS = {
-    DataTypes.Coil: [
-        {"address": 57, "length": 27},
-        {"address": 105, "length": 3},
-        {"address": 213, "length": 40},
-        {"address": 130, "length": 50},
-        {"address": 42, "length": 88},
-        {"address": 220, "length": 35},
-        {"address": 59, "length": 82},
-        {"address": 24, "length": 62},
+OPERATION_MAPPING = {
+    2148: [
+        {
+            "name": "t_outdoor",
+            "type": "float",
+            "entity_type": "temperature",
+            "address": 21,
+        },
     ],
-    DataTypes.Register: [
-        {"address": 1, "length": 45},
-        {"address": 59, "length": 1},
-        {"address": 176, "length": 26},
-        {"address": 5066, "length": 18},
-        {"address": 5185, "length": 1},
-        {"address": 39, "length": 5},
-        {"address": 117, "length": 37},
-        {"address": 5062, "length": 40},
-        {"address": MODEL_ADDRESS, "length": MODEL_LENGTH},
+    2125: [
+        {
+            "name": "model_name",
+            "type": "string",
+            "entity_type": "sensor",
+            "value_fn": lambda self, response: self.concatenate_model_name(
+                response[:5]
+            ),
+        },
     ],
 }
 
-MAPPING = {
+""" MAPPING = {
     "t_heating": {
         "data_type": DataTypes.Register,
         "type": "float",
@@ -283,6 +269,7 @@ MAPPING = {
         "entity_type": "state",
     },
 }
+"""
 
 
 class EcoAirApi(EcoforestApi):
@@ -290,73 +277,70 @@ class EcoAirApi(EcoforestApi):
         super().__init__(host, httpx.BasicAuth(user, password))
 
     async def get(self) -> EcoAirDevice:
-        state = {DataTypes.Coil: {}, DataTypes.Register: {}}
+        state = {}
 
-        for dt in [DataTypes.Coil, DataTypes.Register]:
-            for request in REQUESTS[dt]:
-                state[dt].update(
-                    await self._load_data(
-                        request["address"], request["length"], Operations.Get[dt]
-                    )
-                )
+        for operation, definitions in OPERATION_MAPPING.items():
+            state[operation] = await self._load_data(operation)
 
         device_info = {}
-        for name, definition in MAPPING.items():
-            match definition["type"]:
-                case "int":
-                    value = self.parse_ecoforest_int(
-                        state[definition["data_type"]][definition["address"]]
+
+        # Process each operation mapping
+        for operation, definitions in OPERATION_MAPPING.items():
+            # Process each definition in the operation
+            for definition in definitions:
+                value = None
+                if "value_fn" in definition:
+                    # Apply the value function to get the result
+                    value = definition["value_fn"](self, state[operation])
+                elif "address" in definition:
+                    # Get the raw value
+                    value = state[operation][definition["address"]]
+                    match definition["type"]:
+                        case "int":
+                            value = self.parse_ecoforest_int(value)
+                        case "float":
+                            value = self.parse_ecoforest_float(value)
+                        case "boolean":
+                            value = self.parse_ecoforest_bool(value)
+                        case "custom":
+                            continue
+                        case _:
+                            _LOGGER.error("unknown entity type for %s", name)
+                            continue
+
+                device_info[definition["name"]] = value
+
+        for operation, definitions in OPERATION_MAPPING.items():
+            # Process each definition in the operation
+            for definition in definitions:
+                if definition["entity_type"] == "temperature":
+                    if device_info[definition["name"]] == -999.9:
+                        device_info[definition["name"]] = None
+
+                # Convert power to W
+                if (
+                    definition["entity_type"] == "power"
+                    and definition["name"] in device_info
+                ):
+                    device_info[definition["name"]] = (
+                        device_info[definition["name"]] * 1000
                     )
-                case "float":
-                    value = self.parse_ecoforest_float(
-                        state[definition["data_type"]][definition["address"]]
-                    )
-                case "boolean":
-                    value = self.parse_ecoforest_bool(
-                        state[definition["data_type"]][definition["address"]]
-                    )
-                case "custom":
-                    continue
-                case _:
-                    _LOGGER.error("unknown entity type for %s", name)
-                    continue
 
-            device_info[name] = value
-
-        for name, definition in MAPPING.items():
-            if definition["entity_type"] == "temperature":
-                if device_info[name] == -999.9:
-                    device_info[name] = None
-
-            # Convert power to W
-            if definition["entity_type"] == "power" and name in device_info:
-                device_info[name] = device_info[name] * 1000
-
-            if definition["entity_type"] == "state":
-                device_info[name] = {0: "off", 1: "on", 2: "emergency"}.get(
-                    device_info[name], "unknown"
-                )
-
-            if definition["type"] != "custom":
-                continue
-            device_info[name] = definition["value_fn"](device_info)
+                if definition["entity_type"] == "state":
+                    device_info[definition["name"]] = {
+                        0: "off",
+                        1: "on",
+                        2: "emergency",
+                    }.get(device_info[definition["name"]], "unknown")
 
         _LOGGER.debug(device_info)
         _LOGGER.debug(state)
-        return EcoAirDevice.build(self.parse_model_name(state), device_info)
+        return EcoAirDevice.build(device_info["model_name"], device_info)
 
-    async def _load_data(self, address, length, op_type) -> dict[int, str]:
-        response = await self._request(
-            data={"idOperacion": op_type, "dir": address, "num": length}
-        )
+    async def _load_data(self, operation) -> dict:
+        response = await self._request(data={"idOperacion": operation})
 
-        result = {}
-        index = 0
-        for i in range(address, address + length):
-            result[i] = response[index]
-            index += 1
-
-        return result
+        return response
 
     async def turn_switch(self, name, on: bool | None = False) -> EcoAirDevice:
         if name not in MAPPING.keys():
@@ -389,33 +373,19 @@ class EcoAirApi(EcoforestApi):
         return await self.get()
 
     def _parse(self, response: str) -> list[str]:
-        lines = response.split("\n")
+        lines = [line.strip() for line in response.split("\n") if line.strip()]
 
-        a, b = lines[0].split("=")
-        if (
-            a
-            not in [
-                "error_geo_get_reg",
-                "error_geo_get_bit",
-                "error_geo_set_reg",
-                "error_geo_set_bit",
-            ]
-            or b != "0"
-        ):
-            raise Exception("bad response: {}".format(response))
+        if not lines:
+            raise Exception("empty response")
 
-        return lines[1].split("&")[2:]
+        # Parse error line
+        error_line = lines[0]
+        error_code = error_line.split("=")
+        if len(error_code) != 2 or error_code[1] != "0":
+            raise Exception(f"bad response: {response}")
 
-    def parse_model_name(self, data):
-        model_dictionary = ["--"] + [*string.digits] + [*string.ascii_uppercase]
-
-        result = ""
-        for address in range(MODEL_ADDRESS, MODEL_ADDRESS + MODEL_LENGTH):
-            result += model_dictionary[
-                self.parse_ecoforest_int(data[DataTypes.Register][address])
-            ]
-
-        return result
+        # For lines containing =, take the part after =, otherwise keep the original value
+        return [line.split("=")[1] if "=" in line else line for line in lines[1:-1]]
 
     def convert_to_ecoforest_int(self, value):
         value = int(value * 10)
@@ -434,3 +404,27 @@ class EcoAirApi(EcoforestApi):
 
     def parse_ecoforest_float(self, value):
         return self.parse_ecoforest_int(value) / 10
+
+    def _parse_model_hex_to_char(self, value: str) -> str:
+        """Convert hex value to model name character using the same mapping as JavaScript."""
+        val = int(value, 16)
+        if val > 32768:
+            val = val - 65536
+
+        # Return -- for 0, digits for 1-10, letters for 11-36
+        if val == 0:
+            return "--"
+        elif 1 <= val <= 10:
+            return str(val - 1)  # 1->0, 2->1, etc
+        elif 11 <= val <= 36:
+            return chr(val - 11 + ord("A"))  # 11->A, 12->B, etc
+        return "--"
+
+    def concatenate_model_name(self, parts: list[str]) -> str:
+        """Concatenate hex values into model name using same logic as JavaScript."""
+        if len(parts) < 5:
+            return ""
+
+        # Convert each hex value to its character representation
+        chars = [self._parse_model_hex_to_char(part) for part in parts]
+        return "".join(chars)
