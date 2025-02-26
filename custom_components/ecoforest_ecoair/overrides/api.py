@@ -62,6 +62,12 @@ OPERATION_MAPPING = {
             "address": 30,
             "entity_type": "measurement",
         },
+        {
+            "name": "state",
+            "type": "int",
+            "entity_type": "state",
+            "address": 6,
+        },
     ],
     2149: [
         {
@@ -92,6 +98,14 @@ OPERATION_MAPPING = {
             "type": "float",
             "entity_type": "power",
             "address": 1,
+        },
+    ],
+    2150: [
+        {
+            "name": "boiler_state",
+            "type": "int",
+            "entity_type": "state",
+            "address": 0,
         },
     ],
     2151: [
@@ -315,6 +329,7 @@ class EcoAirApi(EcoforestApi):
                         0: "off",
                         1: "on",
                         2: "emergency",
+                        3: "off",
                     }.get(device_info[definition["name"]], "unknown")
 
         _LOGGER.debug(device_info)
